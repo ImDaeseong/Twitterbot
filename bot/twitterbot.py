@@ -102,6 +102,8 @@ if __name__ == "__main__":
         print(result)
     """
 
+    """
     results = searchCursor(api, '최신 영화')
     for result in results:
         print(result)
+    """
