@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
@@ -21,9 +22,6 @@ func getClient() (*twitter.Client, error) {
 	httpClient := config.Client(oauth1.NoContext, token)
 	client := twitter.NewClient(httpClient)
 
-	//user, _, err := client.Accounts.VerifyCredentials(&twitter.AccountVerifyParams{})
-	//fmt.Printf("ScreenName: %v \n", user.ScreenName)
-
 	_, _, err := client.Accounts.VerifyCredentials(nil)
 	if err != nil {
 		return nil, err
@@ -33,7 +31,13 @@ func getClient() (*twitter.Client, error) {
 }
 
 func getUser(client *twitter.Client) (*twitter.User, error) {
-	user, _, err := client.Accounts.VerifyCredentials(nil)
+
+	verifyParams := &twitter.AccountVerifyParams{
+		SkipStatus:   twitter.Bool(true),
+		IncludeEmail: twitter.Bool(true),
+	}
+	user, _, err := client.Accounts.VerifyCredentials(verifyParams)
+	//user, _, err := client.Accounts.VerifyCredentials(nil)
 	if err != nil {
 		return nil, err
 	}
@@ -85,6 +89,17 @@ func SendMessage(client *twitter.Client, sMsg string) {
 	}
 }
 
+func SendMessageID(client *twitter.Client, sMsg string, tweetid int64) {
+
+	replyTo := new(twitter.StatusUpdateParams)
+	replyTo.InReplyToStatusID = tweetid
+
+	_, _, err := client.Statuses.Update(sMsg, replyTo)
+	if err != nil {
+		log.Print(err)
+	}
+}
+
 func searchKeyword(client *twitter.Client, skey string) ([]twitter.Tweet, error) {
 
 	searchParams := &twitter.SearchTweetParams{
@@ -100,6 +115,60 @@ func searchKeyword(client *twitter.Client, skey string) ([]twitter.Tweet, error)
 	return search.Statuses, nil
 }
 
+func searchretweet(client *twitter.Client, skey string) {
+
+	searchParams := &twitter.SearchTweetParams{
+		Query:      skey,
+		Count:      1000,
+		ResultType: "recent",
+	}
+	search, _, err := client.Search.Tweets(searchParams)
+	if err != nil {
+		log.Print(err)
+	}
+
+	for _, tweet := range search.Statuses {
+		//fmt.Printf("%v\n", tweet.ID)
+		//fmt.Printf("%s\n", tweet.User.ScreenName)
+		//fmt.Printf("%v\n", tweet.Text)
+		//fmt.Printf("%v\n", tweet.FullText)
+
+		sMsg := fmt.Sprintf("[%v] - %s\n", tweet.ID, tweet.Text)
+		fmt.Printf(sMsg)
+
+		client.Statuses.Retweet(tweet.ID, &twitter.StatusRetweetParams{})
+		time.Sleep(100 * time.Millisecond)
+	}
+}
+
+func checkfavorite(client *twitter.Client, skey string) {
+
+	searchParams := &twitter.SearchTweetParams{
+		Query:      skey,
+		Count:      10,
+		ResultType: "recent",
+	}
+	search, _, err := client.Search.Tweets(searchParams)
+	if err != nil {
+		log.Print(err)
+	}
+
+	for _, tweet := range search.Statuses {
+
+		//sMsg := fmt.Sprintf("[%s] - %s\n", tweet.User.ScreenName, tweet.Text)
+		//fmt.Printf(sMsg)
+
+		//sMsg := fmt.Sprintf("%v - %v\n", tweet.Entities.Media, tweet.Entities.Urls)
+		//fmt.Printf(sMsg)
+
+		if tweet.Favorited == false {
+		}
+
+		if tweet.User.Following == false {
+		}
+	}
+}
+
 func main() {
 
 	client, err := getClient()
@@ -112,14 +181,19 @@ func main() {
 		log.Print(err)
 	}
 
-	fmt.Printf("%s\n", user.ScreenName)
-	fmt.Printf("%s\n", user.IDStr)
-	fmt.Printf("%v\n", user.ID)
-	fmt.Printf("%s\n", user.Name)
-	fmt.Printf("%s\n", user.Location)
-	fmt.Printf("%d\n", user.FriendsCount)
+	//SendMessage(client, "공부중")
+	//SendMessageID(client, "공부중", user.ID)
 
-	//SendMessage(client, "test")
+	fmt.Printf("user.FriendsCount:%d\n", user.FriendsCount)
+	fmt.Printf("user.Description:%s\n", user.Description)
+	fmt.Printf("user.Location:%s\n", user.Location)
+	fmt.Printf("user.ID:%v\n", user.ID)
+	fmt.Printf("user.IDStr:%s\n", user.IDStr)
+	fmt.Printf("user.ScreenName:%s\n", user.ScreenName)
+	fmt.Printf("user.Name:%s\n", user.Name)
+	fmt.Printf("user.FollowersCount:%d\n", user.FollowersCount)
+	fmt.Printf("user.StatusesCount:%d\n", user.StatusesCount)
+	fmt.Printf("user.Timezone:%s\n", user.Timezone)
 
 	/*
 		tweets := hometimeline(client)
@@ -141,10 +215,14 @@ func main() {
 		}
 	*/
 
-	tweets, _ := searchKeyword(client, "최신 영화")
-	for _, tweet := range tweets {
-		sMsg := fmt.Sprintf("%d/%s - %s\n", tweet.ID, tweet.User.ScreenName, tweet.Text)
-		fmt.Printf(sMsg)
-	}
+	/*
+		tweets, _ := searchKeyword(client, "최신 영화")
+		for _, tweet := range tweets {
+			sMsg := fmt.Sprintf("%d/%s - %s\n", tweet.ID, tweet.User.ScreenName, tweet.Text)
+			fmt.Printf(sMsg)
+		}
+	*/
 
+	//searchretweet(client, "#python")
+	checkfavorite(client, "#python")
 }
