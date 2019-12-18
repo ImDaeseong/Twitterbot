@@ -97,13 +97,11 @@ if __name__ == "__main__":
     # friendList(api)
 
     """
-    results = searchKeyword(api, '최신 영화')
-    for result in results:
-        print(result)
-    """
-
-    """
     results = searchCursor(api, '최신 영화')
     for result in results:
         print(result)
     """
+
+    results = searchKeyword(api, '최신 영화')
+    for result in results:
+        print(result)

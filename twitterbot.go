@@ -85,6 +85,21 @@ func SendMessage(client *twitter.Client, sMsg string) {
 	}
 }
 
+func searchKeyword(client *twitter.Client, skey string) ([]twitter.Tweet, error) {
+
+	searchParams := &twitter.SearchTweetParams{
+		Query:      skey,
+		Count:      1000,
+		ResultType: "recent",
+	}
+	search, _, err := client.Search.Tweets(searchParams)
+	if err != nil {
+		log.Print(err)
+	}
+
+	return search.Statuses, nil
+}
+
 func main() {
 
 	client, err := getClient()
@@ -125,5 +140,11 @@ func main() {
 			fmt.Println(item)
 		}
 	*/
+
+	tweets, _ := searchKeyword(client, "최신 영화")
+	for _, tweet := range tweets {
+		sMsg := fmt.Sprintf("%d/%s - %s\n", tweet.ID, tweet.User.ScreenName, tweet.Text)
+		fmt.Printf(sMsg)
+	}
 
 }
