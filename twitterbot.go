@@ -224,5 +224,7 @@ func main() {
 	*/
 
 	//searchretweet(client, "#python")
-	checkfavorite(client, "#python")
+	//checkfavorite(client, "#python")
+
+	//SendMessageID(client, "공부중", user.ID)
 }

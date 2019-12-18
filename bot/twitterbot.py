@@ -2,7 +2,7 @@ import tweepy
 import time
 from datetime import datetime
 from tweepy import TweepError
-
+from tweepy.binder import bind_api
 
 api_key = 'pnDHE9x8v0UIUUann6IMQ5EHP'
 api_secret_key = 'n2o1gLnW9k13GS8bXjwPWtBxw68R4SBP8LGD3qk8EApbeyW3Ry'
@@ -44,8 +44,8 @@ def sendMessage(api, sMsg):
 def senddirectmessage(api, recepient_id, message):
     try:
         api.send_direct_message(recipient_id=recepient_id, text=message)
-    except TweepError:
-        print('senddirectmessage error')
+    except tweepy.TweepError as error:
+        print(error.reason)
 
 
 def hometimeline(api):
@@ -94,15 +94,16 @@ def checkfavorite(api, skey):
             tweet.favorite()
             # follow 하기
             if not tweet.user.following:
-               tweet.user.follow()
+                tweet.user.follow()
 
     except tweepy.TweepError as error:
         print(error.reason)
 
+
 def photopath(api, path):
     try:
         now = datetime.now()
-        status = 'my photo:' +  now.strftime("%Y-%m-%d %H:%M:%S")
+        status = 'my photo:' + now.strftime("%Y-%m-%d %H:%M:%S")
         api.update_with_media(path, status=status)
     except tweepy.TweepError as error:
         print(error.reason)
@@ -125,6 +126,8 @@ if __name__ == "__main__":
     print('user.statuses_count:', str(user.statuses_count))
     print('user.time_zone:', user.time_zone)
 
+    # senddirectmessage(api, user.id, '공부중')
+
     # api.update_status("@" + user.screen_name, in_reply_to_status_id=user.id)
     # hometimeline(api)
     # retweetofmeList(api)
@@ -146,6 +149,3 @@ if __name__ == "__main__":
     # searchretweet(api, '최신 영화')
     # checkfavorite(api, '#python')
     # photopath(api, 'e:/a.jpg')
-
-
-
