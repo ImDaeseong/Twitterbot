@@ -181,9 +181,6 @@ func main() {
 		log.Print(err)
 	}
 
-	//SendMessage(client, "공부중")
-	//SendMessageID(client, "공부중", user.ID)
-
 	fmt.Printf("user.FriendsCount:%d\n", user.FriendsCount)
 	fmt.Printf("user.Description:%s\n", user.Description)
 	fmt.Printf("user.Location:%s\n", user.Location)
@@ -226,5 +223,6 @@ func main() {
 	//searchretweet(client, "#python")
 	//checkfavorite(client, "#python")
 
+	//SendMessage(client, "공부중")
 	//SendMessageID(client, "공부중", user.ID)
 }
