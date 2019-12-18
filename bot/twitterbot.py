@@ -2,7 +2,6 @@ import tweepy
 import time
 from datetime import datetime
 from tweepy import TweepError
-from tweepy.binder import bind_api
 
 api_key = 'pnDHE9x8v0UIUUann6IMQ5EHP'
 api_secret_key = 'n2o1gLnW9k13GS8bXjwPWtBxw68R4SBP8LGD3qk8EApbeyW3Ry'
@@ -113,8 +112,6 @@ if __name__ == "__main__":
     api = getAPI()
     user = api.me()
 
-    # api.update_status(status="공부중")
-
     print('user.friends_count:', user.friends_count)
     print('user.description:', user.description)
     print('user.location:', user.location)
@@ -126,8 +123,8 @@ if __name__ == "__main__":
     print('user.statuses_count:', str(user.statuses_count))
     print('user.time_zone:', user.time_zone)
 
+    # api.update_status(status="공부중")
     # senddirectmessage(api, user.id, '공부중')
-
     # api.update_status("@" + user.screen_name, in_reply_to_status_id=user.id)
     # hometimeline(api)
     # retweetofmeList(api)
