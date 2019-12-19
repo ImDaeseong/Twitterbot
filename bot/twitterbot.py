@@ -35,6 +35,14 @@ def retweetofmeList(api):
         print(tweet.text)
 
 
+def sendLink(api, sText, sLink):
+    try:
+        # api.update_status(sText + ' ' + sLink, tweet_method='extended')
+        api.update_status('{}\n{}'.format(sText, sLink, tweet_mode='extended'))
+    except tweepy.TweepError as error:
+        print(error.reason)
+
+
 def sendMessage(api, sMsg):
     for follower in api.followers_ids():
         senddirectmessage(api, follower, sMsg)
@@ -122,6 +130,8 @@ if __name__ == "__main__":
     print('user.followers_count:', user.followers_count)
     print('user.statuses_count:', str(user.statuses_count))
     print('user.time_zone:', user.time_zone)
+
+    # sendLink(api, '나의 이미지', 'https://avatars0.githubusercontent.com/u/10001221?s=460&v=4')
 
     # api.update_status(status="공부중")
     # senddirectmessage(api, user.id, '공부중')

@@ -81,6 +81,15 @@ func hometimeline(client *twitter.Client) []twitter.Tweet {
 	return (tweets)
 }
 
+func sendLink(client *twitter.Client, sText string, sLink string) {
+
+	sMsg := fmt.Sprintf("%s\n%s", sText, sLink)
+	_, _, err := client.Statuses.Update(sMsg, nil)
+	if err != nil {
+		log.Print(err)
+	}
+}
+
 func SendMessage(client *twitter.Client, sMsg string) {
 
 	_, _, err := client.Statuses.Update(sMsg, nil)
@@ -225,4 +234,5 @@ func main() {
 
 	//SendMessage(client, "공부중")
 	//SendMessageID(client, "공부중", user.ID)
+	//sendLink(client, "나의 이미지", "https://avatars0.githubusercontent.com/u/10001221?s=460&v=4")
 }
